@@ -1,0 +1,14 @@
+# ignore ALL .log files
+*.log
+
+# ignore ALL files in ANY directory named temp
+temp/
+
+#ignore VScode folders
+obj/
+.vscode/
+bin/
+
+# ignore cspoj & sln files
+*.csproj
+*.sln
