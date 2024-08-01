@@ -7,9 +7,7 @@ namespace Minesweeper
 {
     class Board
     {
-        readonly int speedOfReveal = 0; //mostly useless tbh, just for fun in small ones
-        readonly char symbol = ' ';
-        readonly char mineSymbol = 'X';
+        readonly int speedOfReveal = 0; //mostly useless tbh, just for fun on small boards
 
         public int Rows
         {get;set;}
@@ -17,11 +15,13 @@ namespace Minesweeper
         {get;set;}
         public int MineCount
         {get;set;}
-        char[,] BoardArr
+        public char[,] BoardArr
         {get;set;}
-        bool[,] revealedBoardArr
+        public bool[,] RevealedBoardArr
         {get;set;}
-        bool revealed
+        public bool[,] FlaggedBoardArr
+        {get;set;}
+        bool Revealed
         {get;set;}
 
         //copy board constructor
@@ -31,8 +31,9 @@ namespace Minesweeper
             Columns = s.Columns;
             MineCount = s.MineCount;
             BoardArr = s.BoardArr;
-            revealedBoardArr = s.revealedBoardArr;
-            revealed = s.revealed;
+            RevealedBoardArr = s.RevealedBoardArr;
+            FlaggedBoardArr = s.FlaggedBoardArr;
+            Revealed = s.Revealed;
         }
 
         //Board Constructor
@@ -42,18 +43,19 @@ namespace Minesweeper
             Columns = columns;
             MineCount = mineCount;
             BoardArr = new char[Rows,Columns];
-            revealedBoardArr = new bool[Rows,Columns];
-            revealed = false;
+            RevealedBoardArr = new bool[Rows,Columns];
+            FlaggedBoardArr = new bool[Rows,Columns];
+            Revealed = false;
         }
 
         public void BoardMaker()
         {
-            //for each tile in the board set it to symbol
+            //for each tile in the board set it to white space
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
                 {
-                    BoardArr[i,j] = symbol;
+                    BoardArr[i,j] = ' ';
                 }
             }
 
@@ -61,7 +63,7 @@ namespace Minesweeper
             Random random = new();
             for (int i = 0; i < MineCount; i++)
             {
-                BoardArr[random.Next(0,Rows),random.Next(0,Columns)] = mineSymbol;
+                BoardArr[random.Next(0,Rows),random.Next(0,Columns)] = 'X';
             }
 
             GenerateTileNumbers();
@@ -87,7 +89,7 @@ namespace Minesweeper
             }
             Console.Write("|");
             //Add divider line and cross before full divider line
-            Console.Write("\n-+");
+            Console.Write("\n--+");
 
             //write divider line
             for (int i = 0; i < Columns; i++)
@@ -95,7 +97,7 @@ namespace Minesweeper
                 Thread.Sleep(speedOfReveal);
                 Console.Write($"---");
             }
-            Console.Write("-+--");
+            Console.Write("+--");
             //start next line
             Console.WriteLine();
 
@@ -116,12 +118,15 @@ namespace Minesweeper
                 for (int j = 0; j < Columns; j++)
                 {
                     Thread.Sleep(speedOfReveal);
-
-                    if (revealed)
+                    if (Revealed)
                     {
                         ChangeColor(BoardArr[i,j]); //write each character with own color   
                     }
-                    else if (revealedBoardArr[i,j] == true) //checks if tile has been revealed
+                    else if (FlaggedBoardArr[i,j] == true)//checks if tile is flagged
+                    {
+                        ChangeColor('P');
+                    }
+                    else if (RevealedBoardArr[i,j] == true) //checks if tile has been revealed
                     {
                         ChangeColor(BoardArr[i,j]); //write each character with own color   
                     } else
@@ -183,7 +188,7 @@ namespace Minesweeper
                                     mineHasntBeenCounted = false;
                                 }
                                 //if that tile is a mine add 1 to the surrounding mine count
-                                if (mineHasntBeenCounted && BoardArr[x+i,y+j] == mineSymbol)
+                                if (mineHasntBeenCounted && BoardArr[x+i,y+j] == 'X')
                                 {
                                     surroundingMineCount++;
                                 }
@@ -204,12 +209,16 @@ namespace Minesweeper
             Console.BackgroundColor = ConsoleColor.Black;
             switch(character)
             {
+                case 'P':
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
                 case '?':
                     Console.BackgroundColor = ConsoleColor.DarkGray;
                     Console.ForegroundColor = ConsoleColor.Black;
                     break;
                 case ' ':
-                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.BackgroundColor = ConsoleColor.Black;
                     break;
                 case 'X':
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -243,6 +252,23 @@ namespace Minesweeper
             }
             Console.Write($" {character} ");
             Console.ResetColor();
+        }
+        public void AddToRevealedArray(int x, int y)
+        {
+            RevealedBoardArr[x,y] = true;
+        }
+
+        public void SetFlag(int x, int y)
+        {
+            if (FlaggedBoardArr[x,y] == true)
+            {
+                FlaggedBoardArr[x,y] = false;
+            }
+            else
+            {
+                FlaggedBoardArr[x,y] = true;
+            }
+            
         }
     }
 }
