@@ -10,21 +10,21 @@ namespace Minesweeper
     {
         readonly int speedOfReveal = 0; //mostly useless tbh, just for fun on small boards
 
-        public int Rows
+        private int Rows
         {get;set;}
-        public int Columns
+        private int Columns
         {get;set;}
-        public int MineCount
+        private int MineCount
         {get;set;}
-        public char[,] BoardArr
+        private char[,] BoardArr
         {get;set;}
-        public bool[,] RevealedBoardArr
+        private bool[,] RevealedBoardArr
         {get;set;}
-        public bool[,] FlaggedBoardArr
+        private bool[,] FlaggedBoardArr
         {get;set;}
-        public bool Revealed
+        private bool Revealed
         {get;set;}
-        public bool Won
+        private bool Won
         {get;set;}        
 
         //copy board constructor
